@@ -1,0 +1,41 @@
+name: Build Yocto Image
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install kas
+      run: pip install kas
+
+    - name: Run kas checkout
+      run: kas checkout
+
+    - name: Initialize the build environment
+      run: |
+        . openembedded-core/oe-init-build-env
+        bitbake kiss-image
+      shell: bash
+
+    - name: Upload Yocto image as artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: yocto-image
+        path: tmp-glibc/deploy/images/dogbonedark/
+
