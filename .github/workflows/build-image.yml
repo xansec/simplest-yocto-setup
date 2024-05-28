@@ -21,8 +21,8 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: Install kas
-      run: pip install kas
+    - name: Install kas and distutils
+      run: pip install kas distutils
 
     - name: Run kas checkout
       run: kas checkout
