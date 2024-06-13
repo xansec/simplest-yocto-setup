@@ -44,9 +44,7 @@ jobs:
     - name: Look around
       run: |
         ls .
-        ls /tmp-glibc
-        ls ./tmp-glibc
-        stat ./tmp-glibc/deploy/images/dogbonedark/kiss-image-dogbonedark.wic
+        find ./ -name "*.wic"
 
     - name: Upload Yocto image as artifact
       uses: actions/upload-artifact@v2
