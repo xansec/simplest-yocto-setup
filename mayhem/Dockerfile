@@ -4,4 +4,4 @@
 # This will copy the image into a scratch container
 
 FROM scratch
-COPY ./yocto-image/_kiss-image-dogbonedark.wic.extracted/ext-root/ /
+COPY ./_kiss-image-dogbonedark.wic.extracted/ext-root/ /

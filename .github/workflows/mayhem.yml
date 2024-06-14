@@ -53,10 +53,8 @@ jobs:
 
     - name: Unpack image
       run: |
-        mkdir -p ./yocto-image
-        unzip yocto-image.zip -d ./yocto-image
-        sudo binwalk -M -e -0 root ./yocto-image/kiss-image-dogbonedark.wic
-        sudo chown -R $(whoami):$(whoami) ./yocto-image
+        sudo binwalk -M -e -0 root ./kiss-image-dogbonedark.wic
+        sudo chown -R $(whoami):$(whoami) ./_kiss-image-dogbonedark.wic.extracted
       shell: bash
 
     - name: Build and push Docker image
