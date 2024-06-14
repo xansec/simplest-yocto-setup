@@ -53,6 +53,7 @@ jobs:
 
     - name: Unpack image
       run: |
+        sudo apt-get update && sudo apt-get install -y binwalk
         sudo binwalk -M -e -0 root ./kiss-image-dogbonedark.wic
         sudo chown -R $(whoami):$(whoami) ./_kiss-image-dogbonedark.wic.extracted
       shell: bash
