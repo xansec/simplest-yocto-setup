@@ -46,6 +46,7 @@ jobs:
     - name: Grab existing image from artifacts
       uses: dawidd6/action-download-artifact@v2
       with:
+        run_id: 9509761517
         name: yocto-image
         path: .
         search_artifacts: true
