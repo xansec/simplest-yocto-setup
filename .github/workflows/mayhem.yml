@@ -44,9 +44,11 @@ jobs:
         echo "IMAGE_NAME=${GITHUB_REPOSITORY,,}" >> ${GITHUB_ENV}
 
     - name: Grab existing image from artifacts
-      uses: actions/download-artifact@v3
+      uses: dawidd6/action-download-artifact@v2
       with:
         name: yocto-image
+        path: .
+        search_artifacts: true
 
     - name: Unpack image
       run: |
