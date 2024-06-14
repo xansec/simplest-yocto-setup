@@ -56,6 +56,7 @@ jobs:
         sudo apt-get update && sudo apt-get install -y binwalk
         sudo binwalk -M -e -0 root ./kiss-image-dogbonedark.wic
         sudo chown -R $(whoami):$(whoami) ./_kiss-image-dogbonedark.wic.extracted
+        sudo chmod -R +x ./_kiss-image-dogbonedark.wic.extracted/ext-root/usr/bin
       shell: bash
 
     - name: Build and push Docker image
