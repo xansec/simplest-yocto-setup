@@ -1,12 +1,10 @@
 name: Build Yocto Image
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   build:
@@ -21,7 +19,7 @@ jobs:
         tool-cache: true
 
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Set up Python
       uses: actions/setup-python@v2
@@ -34,7 +32,7 @@ jobs:
     - name: Run kas checkout
       run: kas checkout
 
-    - name: Initialize the build environment
+    - name: Build bitbake image
       run: |
         . openembedded-core/oe-init-build-env
         sudo apt-get update && sudo apt-get install -y chrpath diffstat
@@ -42,7 +40,7 @@ jobs:
       shell: bash
 
     - name: Upload Yocto image as artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: yocto-image
         path: ./build/tmp-glibc/deploy/images/dogbonedark/kiss-image-dogbonedark.wic

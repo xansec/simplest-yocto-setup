@@ -1,0 +1,108 @@
+name: Run Mayhem
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_run:
+    workflows: ["Build Yocto Image"]
+    types: [requested]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unpack-firmware:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Log in to the Container registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+    - name: Set lowercase image name
+      run: |
+        echo "IMAGE_NAME=${GITHUB_REPOSITORY,,}" >> ${GITHUB_ENV}
+
+    - name: Grab existing image from artifacts
+      uses: dawidd6/action-download-artifact@v6
+      with:
+        workflow: build-image.yml
+        workflow_conclusion: success
+        name: yocto-image
+        path: .
+        search_artifacts: true
+
+    - name: Unpack image
+      run: |
+        sudo apt-get update && sudo apt-get install -y binwalk
+        sudo binwalk -M -e -0 root ./kiss-image-dogbonedark.wic
+        sudo chown -R $(whoami):$(whoami) ./_kiss-image-dogbonedark.wic.extracted
+        sudo chmod -R +x ./_kiss-image-dogbonedark.wic.extracted/ext-root/usr/bin
+      shell: bash
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: true
+        file: mayhem/Dockerfile
+        tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.BRANCH_NAME }}
+        labels: ${{ steps.meta.outputs.labels }}
+
+    outputs:
+      image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.BRANCH_NAME }}
+
+  mayhem:
+    needs: unpack-firmware
+    name: 'mayhem'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        mayhemfile:
+          - mayhem/Mayhemfile
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Start analysis for ${{ matrix.mayhemfile }}
+        id: run-mayhem
+        uses: ForAllSecure/mcode-action@v1
+        with:
+          mayhem-url: ${{ secrets.MAYHEM_URL }}
+          mayhem-token: ${{ secrets.MAYHEM_TOKEN }}
+          args: --image ${{ needs.unpack-firmware.outputs.image }} --file ${{ matrix.mayhemfile }} --duration 60
+          fail-on-defects: true
+          sarif-output: sarif
+
+      - name: Upload SARIF file(s)
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: sarif
+

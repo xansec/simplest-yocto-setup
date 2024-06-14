@@ -1,0 +1,11 @@
+image: ghcr.io/xansec/simplest-yocto-setup:latest
+duration: 60
+project: xansec/simplest-yocto-setup
+target: readbootlog 
+tasks:
+  - name: exploitability_factors
+  - name: regression_testing
+  - name: behavior_testing
+  - name: coverage_analysis
+cmds:
+  - cmd: /usr/bin/readbootlog -f @@
