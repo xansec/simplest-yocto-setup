@@ -47,7 +47,7 @@ jobs:
         echo "IMAGE_NAME=${GITHUB_REPOSITORY,,}" >> ${GITHUB_ENV}
 
     - name: Grab existing image from artifacts
-      uses: dawidd6/action-download-artifact@v2
+      uses: dawidd6/action-download-artifact@v6
       with:
         workflow: build-image.yml
         workflow_conclusion: success
