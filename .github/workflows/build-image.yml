@@ -27,7 +27,19 @@ jobs:
         python-version: '3.x'
 
     - name: Install kas and distutils
-      run: pip install kas setuptools 
+      run: pip install kas setuptools
+
+    - name: Allow bitbake to create user namespace
+      run: |
+        sudo tee /etc/apparmor.d/bitbake > /dev/null <<'EOF'
+        abi <abi/4.0>,
+        include <tunables/global>
+        profile bitbake /**/bitbake/bin/bitbake flags=(unconfined) {
+                userns,
+        }
+        EOF
+
+        sudo apparmor_parser -r /etc/apparmor.d/bitbake
 
     - name: Run kas checkout
       run: kas checkout
