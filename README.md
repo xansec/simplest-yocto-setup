@@ -152,7 +152,7 @@ kas checkout
 
 # For i.MX93, you will have to accept the NXP EULA, after reading
 # meta-kiss/recipes-bsp/firmware-imx/files/EULA:
-echo 'LICENSE_FLAGS_ACCEPTED += "NXP_EULA_v58"' >> conf/local.conf
+echo 'LICENSE_FLAGS_ACCEPTED += "NXP_EULA_v58"' >> conf/site.conf
 
 # Run your first build
 bitbake kiss-image
