@@ -51,9 +51,15 @@ jobs:
         bitbake kiss-image
       shell: bash
 
-    - name: Upload Yocto image as artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: yocto-image
-        path: ./build/tmp-glibc/deploy/images/dogbonedark/kiss-image-dogbonedark.wic
+    - name: Confirm image location
+      run: |
+        ls -l ./tmp-glibc/deploy/images/dogbonedark/
+        ls -l ./build/tmp-glibc/deploy/images/dogbonedark/
+        tree .
+
+    # - name: Upload Yocto image as artifact
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: yocto-image
+    #     path: ./build/tmp-glibc/deploy/images/dogbonedark/kiss-image-dogbonedark.wic
 
