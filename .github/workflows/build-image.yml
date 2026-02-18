@@ -53,9 +53,9 @@ jobs:
 
     - name: Confirm image location
       run: |
-        ls -l ./tmp-glibc/deploy/images/dogbonedark/
-        ls -l ./build/tmp-glibc/deploy/images/dogbonedark/
-        tree .
+        ls -l ./tmp-glibc/deploy/images/dogbonedark/ || true
+        ls -l ./build/tmp-glibc/deploy/images/dogbonedark/ || true
+        tree . || true
 
     # - name: Upload Yocto image as artifact
     #   uses: actions/upload-artifact@v4
