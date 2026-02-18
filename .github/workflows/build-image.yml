@@ -55,5 +55,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: yocto-image
-        path: ./build/tmp-glibc/deploy/images/dogbonedark/kiss-image-dogbonedark.wic
-
+        path: ./build/tmp-glibc/deploy/images/dogbonedark/kiss-image-dogbonedark.rootfs.wic
